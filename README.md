@@ -1,7 +1,7 @@
 # Twitter CLIent
 ## install
 ```sh
-cargo install --git https://github.com/n01e0/TwtterCLIent.git
+cargo install --git https://github.com/n01e0/twtter_client.git
 ```
 
 You need write to `$HOME/.twitter_cli/config.toml`
