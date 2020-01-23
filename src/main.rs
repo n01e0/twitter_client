@@ -8,6 +8,7 @@ extern crate serde_derive;
 extern crate toml;
 
 use std::fs;
+use std::env;
 use serde_json::Result;
 use oauthcli::*;
 use url::form_urlencoded;
@@ -21,12 +22,18 @@ struct Config {
 }
 
 fn main() {
-    let args: Vec<String> = std::env::args().collect();
-    let conf: Config = toml::from_str(&fs::read_to_string("$HOME/.twitter_cli/config.toml").unwrap()).unwrap();
-    if args.len() > 1 {
-        tweet(&args[1], conf);
-    } else {
-        timeline(conf);
+    let args: Vec<String> = env::args().collect();
+    let config_path = format!("{}/.twitter_cli/config.toml", env::var("HOME").unwrap());
+    match fs::read_to_string(&config_path) {
+        Ok(content) =>  {
+            let conf: Config = toml::from_str(&content).unwrap();
+            if args.len() > 1 {
+                tweet(&args[1], conf);
+            } else {
+                timeline(conf);
+            }
+        },
+        Err(err) => eprintln!("{}", err),
     }
 }
 
@@ -53,17 +60,17 @@ fn tweet(content: &str, config: Config) {
 
 
 fn timeline(config: Config) {
-    #[derive(Serialize, Deserialize, Debug)] 
+    #[derive(Deserialize, Debug)] 
     struct User {
         name: String
     }
     
-    #[derive(Serialize, Deserialize, Debug)] 
+    #[derive(Deserialize, Debug)] 
     struct TweetData {
         text: String,
         user: User
     }
-    #[derive(Serialize, Deserialize, Debug)] 
+    #[derive(Deserialize, Debug)] 
     struct Json {
         tw: TweetData
     }
@@ -82,7 +89,7 @@ fn timeline(config: Config) {
         let top: Result<Json> = serde_json::from_str(&resp.into_string().unwrap());
         match top {
             Ok(top) => println!("{}: {}", &top.tw.user.name, &top.tw.text),
-            Err(err) => eprintln!("{}", err),
+            Err(err) => eprintln!("Error: {}", err),
         }
     } else {
         eprintln!("{}: {}", &resp.status(), &resp.status_text());
