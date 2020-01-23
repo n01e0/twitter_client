@@ -21,6 +21,16 @@ struct Config {
     token_secret: String 
 }
 
+#[derive(Deserialize, Debug)] 
+struct Errors {
+    code: usize,
+    message: String
+}
+#[derive(Deserialize, Debug)] 
+struct Response {
+    errors: Vec<Errors>
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     let config_path = format!("{}/.twitter_cli/config.toml", env::var("HOME").unwrap());
@@ -54,7 +64,11 @@ fn tweet(content: &str, config: Config) {
     if resp.ok() {
         println!("Tweeted! \"{}\"", content);
     } else {
-        eprintln!("Error! {}: {}", resp.status(), resp.status_text());
+        let err: Result<Response> = serde_json::from_str(&resp.into_string().unwrap());
+        match err {
+            Ok(response) => eprintln!("Error code:{}\n\t{}", &response.errors[0].code, &response.errors[0].message),
+            Err(err) => eprintln!("{}", err),
+        }
     }
 }
 
