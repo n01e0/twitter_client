@@ -1,6 +1,7 @@
 extern crate oauthcli;
-extern crate url;
 extern crate ureq;
+extern crate url;
+extern crate percent_encoding;
 extern crate serde;
 extern crate serde_json;
 #[macro_use]
@@ -11,7 +12,9 @@ use std::fs;
 use std::env;
 use serde_json::Result;
 use oauthcli::*;
-use url::form_urlencoded;
+use percent_encoding::{utf8_percent_encode, AsciiSet, CONTROLS};
+
+const FLAG: &AsciiSet = &CONTROLS.add(b' ').add(b'"').add(b'<').add(b'>').add(b'`').add(b'+').add(b'!').add(b'?').add(b'"').add(b'\'').add(b'$').add(b'@').add(b'#').add(b'%').add(b'^').add(b'&').add(b'*').add(b'(').add(b')').add(b'=').add(b'+').add(b'[').add(b']').add(b'{').add(b'}').add(b';').add(b':').add(b'/').add(b',').add(b'`');
 
 #[derive(Debug, Deserialize)]
 struct Config {
@@ -48,9 +51,7 @@ fn main() {
 }
 
 fn tweet(content: &str, config: Config) {
-    let formated_content = form_urlencoded::Serializer::new(String::new())
-        .append_pair("status", &content)
-        .finish();
+    let formated_content = format!("status={}", utf8_percent_encode(content, FLAG).to_string());
     let url = url::Url::parse(&format!("https://api.twitter.com/1.1/statuses/update.json?{}", formated_content)).unwrap();
     let header =
         OAuthAuthorizationHeaderBuilder::new(
@@ -66,7 +67,10 @@ fn tweet(content: &str, config: Config) {
     } else {
         let err: Result<Response> = serde_json::from_str(&resp.into_string().unwrap());
         match err {
-            Ok(response) => eprintln!("Error code:{}\n\t{}", &response.errors[0].code, &response.errors[0].message),
+            Ok(response) => {
+                eprintln!("Error code:{}\n\t{}", &response.errors[0].code, &response.errors[0].message);
+                eprintln!("Send data = {}", formated_content);
+            },
             Err(err) => eprintln!("{}", err),
         }
     }

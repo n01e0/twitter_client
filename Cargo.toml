@@ -7,11 +7,11 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-url = "1.5.1"
 oauthcli = "*"
+url = "*"
 ureq = { version = "*", features = [ "json" ]}
 serde = "*"
 serde_json = "*"
 serde_derive = "*"
 toml = "*"
-percent-encoding = "*"
+percent-encoding = "2.1.0"
