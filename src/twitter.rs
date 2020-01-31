@@ -77,7 +77,6 @@ pub struct TwitterBuilder {
 }
 
 pub fn configure(config_dir: String, filename: String) {
-    println!("fopen");
     let config_file = fs::File::create(&format!("{}/{}", &config_dir, &filename));
     let mut content = Config {
         api_key: String::new(),
