@@ -10,7 +10,7 @@ edition = "2018"
 oauthcli = "*"
 url = "1.5.1"
 ureq = { version = "*", features = [ "json" ]}
-serde = "*"
+serde = { version = "*", features = [ "derive" ]}
 serde_json = "*"
 serde_derive = "*"
 toml = "*"
