@@ -16,7 +16,7 @@ fn main() {
         },
 
         2 => {
-            let resp = twitter::TwitterBuilder::new().post(args[1].clone()).finish().call();
+            let resp = twitter::TwitterBuilder::new().post(&args[1]).finish().call();
             if let Some(err_resp) = resp.error {
                 for error in err_resp.errors {
                     eprintln!("{}: {}", &error.code, &error.message);

@@ -146,9 +146,9 @@ impl TwitterBuilder {
         self
     }
 
-    pub fn post(mut self, content: String) -> TwitterBuilder {
+    pub fn post(mut self, content: &str) -> TwitterBuilder {
         self.method = Method::Post;
-        self.tweet_content = Some(format!("status={}",utf8_percent_encode(&content, FLAG).to_string()));
+        self.tweet_content = Some(format!("status={}",utf8_percent_encode(content, FLAG).to_string()));
         self
     }
 
