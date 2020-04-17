@@ -2,7 +2,9 @@ mod twitter;
 
 #[macro_use]
 extern crate clap;
+extern crate colored;
 
+use colored::*;
 use clap::{App, Arg};
 
 fn main() {
@@ -19,7 +21,7 @@ fn main() {
         let resp = twitter::TwitterBuilder::new().post(content).finish().call();
         if let Some(err_resp) = resp.error {
             for error in err_resp.errors {
-                eprintln!("{}: {}", &error.code, &error.message);
+                eprintln!("{}", format!("{}: {}", &error.code, &error.message).red());
             }
         } else {
             println!("Tweeted!: \"{}\"", content);
@@ -28,7 +30,7 @@ fn main() {
         let resp = twitter::TwitterBuilder::new().get().finish().call();
         if let Some(err_resp) = resp.error {
             for error in err_resp.errors {
-                eprintln!("{}: {}", &error.code, &error.message);
+                eprintln!("{}", format!("{}: {}", &error.code, &error.message).red());
             }
         } else {
             let tw = resp.tweet.unwrap().tweet_data;

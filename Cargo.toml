@@ -16,3 +16,4 @@ serde_derive = "*"
 toml = "*"
 url = "1.5.1"
 ureq = { version = "*", features = [ "json" ]}
+colored = "1.9.3"
