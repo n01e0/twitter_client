@@ -214,7 +214,14 @@ impl Twitter {
                 } else {
                     return Response {
                         tweet: None,
-                        error: Some(serde_json::from_str(&resp.into_string().unwrap()).unwrap())
+                        error: Some(
+                            serde_json::from_str(
+                                &resp.into_string().unwrap_or_else(|s|{eprintln!("{:#?}", s);panic!("can't into_string()")})
+                            ).unwrap_or_else(|s| {
+                                eprintln!("{:#?}", s);
+                                panic!("can't parse");
+                            }
+                            ))
                     }
                 }
             }
