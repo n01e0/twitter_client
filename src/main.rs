@@ -11,6 +11,7 @@ fn main() {
             (version:   crate_version!())
             (author:    crate_authors!())
             (about:     crate_description!())
+            (@arg input: -i --input "read from stdin")
             (@arg content: "Tweet content")
         ).get_matches();
 
@@ -23,6 +24,18 @@ fn main() {
         } else {
             println!("Tweeted!: \"{}\"", content);
         }
+    } else if args.is_present("input") {
+        let mut content = String::new();
+        std::io::stdin().read_line(&mut content).unwrap();
+        let resp = twitter::TwitterBuilder::new().post(&content).finish().call();
+        if let Some(err_resp) = resp.error {
+            for error in err_resp.errors {
+                eprintln!("{}", format!("{}: {}", &error.code, &error.message).red());
+            }
+        } else {
+            println!("Tweeted!: \"{}\"", content);
+        }
+
     } else {
         let resp = twitter::TwitterBuilder::new().get().finish().call();
         if let Some(err_resp) = resp.error {
