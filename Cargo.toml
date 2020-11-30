@@ -1,6 +1,6 @@
 [package]
 name = "twitter"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["n01e0 <noleo@vanillabeans.mobi>"]
 edition = "2018"
 

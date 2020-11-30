@@ -5,6 +5,7 @@ extern crate clap;
 extern crate colored;
 
 use colored::*;
+use std::io::Read;
 
 fn main() {
     let args = clap_app!(twitter_client =>
@@ -26,7 +27,7 @@ fn main() {
         }
     } else if args.is_present("input") {
         let mut content = String::new();
-        std::io::stdin().read_line(&mut content).unwrap();
+        std::io::stdin().read_to_string(&mut content).unwrap();
         let resp = twitter::TwitterBuilder::new().post(&content).finish().call();
         if let Some(err_resp) = resp.error {
             for error in err_resp.errors {

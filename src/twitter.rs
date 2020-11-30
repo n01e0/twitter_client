@@ -218,8 +218,7 @@ impl Twitter {
                             serde_json::from_str(
                                 &resp.into_string().unwrap_or_else(|s|{eprintln!("{:#?}", s);panic!("can't into_string()")})
                             ).unwrap_or_else(|s| {
-                                eprintln!("{:#?}", s);
-                                panic!("can't parse");
+                                panic!("can't parse response. {:#?}", s);
                             }
                             ))
                     }
